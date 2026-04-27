@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC:R Rune Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #232527;
+            --panel-bg: #2b2d31;
+            --border-color: #393b3d;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #f8fafc;
+            --accent-hover: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --stat-bg: rgba(0, 0, 0, 0.2);
+
+            /* Rarity Colors */
+            --r-common: #94a3b8;
+            --r-uncommon: #10b981;
+            --r-rare: #3b82f6;
+            --r-epic: #a855f7;
+            --r-legendary: #eab308;
+            --r-mythic: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: transparent;
+            color: var(--text-primary);
+            line-height: 1.4;
+            padding: 1.5rem;
+            margin: 0;
+            overflow-y: scroll;
+            font-size: 13px; /* Smaller base font */
+        }
+
+        body::before {
+            display: none;
+        }
+
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 {
+            font-family: 'Outfit', sans-serif; margin: 0; font-size: 36px; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(to right, #60a5fa, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+            to { text-shadow: 0 0 30px rgba(168, 85, 247, 0.6); }
+        }
+
+        .layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 20px;
+            max-width: 1600px; margin: 0 auto; align-items: start;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 24px; position: relative;
+            margin-bottom: 16px; transition: transform 0.3s ease, border-color 0.3s;
+        }
+        .panel:hover { border-color: rgba(255, 255, 255, 0.2); }
+
+        h2, h3 {
+            font-family: 'Outfit', sans-serif; margin-top: 0; color: #fff;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
+            font-weight: 700; letter-spacing: 0.5px; font-size: 16px;
+        }
+
+        label {
+            display: block; font-size: 11px; font-weight: 600; margin-bottom: 4px;
+            color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 8px 12px;
+            background: transparent; 
+            border: 1px solid var(--border-color);
+            border-radius: 4px; color: var(--text-primary);
+            font-family: inherit; font-size: 13px; outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat, repeat; background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+        select option { background-color: #0f172a; color: #fff; }
+
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            border-color: var(--accent); outline: none;
+        }
+
+        textarea { resize: vertical; height: 120px; white-space: pre; overflow-wrap: normal; overflow-x: scroll; }
+
+        .btn {
+            background: var(--stat-bg); border: 1px solid var(--border-color); color: var(--text-primary);
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;
+            font-family: 'Inter', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+        .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4); }
+        .btn-primary:hover { background: linear-gradient(135deg, #60a5fa, #3b82f6); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.6); }
+        
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4); }
+        .btn-success:hover { background: linear-gradient(135deg, #34d399, #10b981); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.6); }
+
+        .btn-danger { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 8px; font-size: 11px; }
+        .btn-danger:hover { background-color: var(--danger); color: #fff; border-color: var(--danger); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); }
+
+        .rune-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px; margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        .rune-card:hover { border-color: rgba(255,255,255,0.2); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+
+        .rune-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 14px; background: rgba(0,0,0,0.3); cursor: pointer;
+            user-select: none; border-bottom: 1px solid var(--border-color);
+        }
+        .rune-header:hover { background: rgba(255,255,255,0.08); }
+
+        .rune-header input {
+            font-size: 16px; font-weight: 700; color: #fff; width: 220px; margin-bottom: 0;
+            background: transparent; border: 1px solid transparent; pointer-events: auto;
+            font-family: 'Outfit', sans-serif; padding: 2px 6px;
+        }
+        .rune-header input:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+
+        .control-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: var(--text-primary); border-radius: 4px; width: 26px; height: 26px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .control-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+
+        .rune-body { padding: 14px; display: block; }
+        .collapsed .rune-body { display: none; }
+
+        .rune-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+        .stat-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .stat-item {
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
+            border-left: 3px solid var(--border-color); border-radius: 6px; padding: 10px;
+            display: grid; grid-template-columns: 140px 90px 120px 90px 1fr auto; gap: 10px;
+            align-items: center; transition: border-color 0.2s;
+        }
+        .stat-item:hover { border-left-color: var(--accent); background: rgba(0,0,0,0.3); }
+
+        .checkbox-label { display: flex; align-items: center; gap: 6px; margin: 0; cursor: pointer; font-size: 12px; color: var(--text-primary); }
+        .checkbox-label input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
+
+        .max-display {
+            color: var(--success); font-weight: 700; font-size: 13px; text-align: right;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1);
+            padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+        .rarity-common { border-top: 3px solid var(--r-common); box-shadow: 0 -2px 10px rgba(148, 163, 184, 0.1); }
+        .rarity-uncommon { border-top: 3px solid var(--r-uncommon); box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.15); }
+        .rarity-rare { border-top: 3px solid var(--r-rare); box-shadow: 0 -2px 10px rgba(59, 130, 246, 0.2); }
+        .rarity-epic { border-top: 3px solid var(--r-epic); box-shadow: 0 -2px 15px rgba(168, 85, 247, 0.25); }
+        .rarity-legendary { border-top: 3px solid var(--r-legendary); box-shadow: 0 -2px 15px rgba(234, 179, 8, 0.25); }
+        .rarity-mythic { border-top: 3px solid var(--r-mythic); box-shadow: 0 -2px 18px rgba(239, 68, 68, 0.3); }
+        
+        .rarity-text { 
+            font-size: 11px; font-weight: 800; margin-right: 12px; 
+            text-transform: uppercase; letter-spacing: 1px; font-family: 'Outfit', sans-serif;
+        }
+
+        .tier-badge {
+            font-size: 12px; font-weight: 900; margin-left: 8px; padding: 2px 8px;
+            border-radius: 4px; background: rgba(0, 0, 0, 0.5); border: 1px solid transparent;
+            letter-spacing: 1px; font-family: 'Outfit', sans-serif;
+        }
+        .tier-1 { color: #fde047; border-color: rgba(253, 224, 71, 0.4); text-shadow: 0 0 8px rgba(253, 224, 71, 0.5); box-shadow: 0 0 10px rgba(253, 224, 71, 0.1) inset; }
+        .tier-2 { color: #fb923c; border-color: rgba(251, 146, 60, 0.5); text-shadow: 0 0 8px rgba(251, 146, 60, 0.5); box-shadow: 0 0 10px rgba(251, 146, 60, 0.1) inset; }
+        .tier-3 { color: #f87171; border-color: rgba(248, 113, 113, 0.6); text-shadow: 0 0 10px rgba(248, 113, 113, 0.6); box-shadow: 0 0 10px rgba(248, 113, 113, 0.15) inset; }
+        .tier-0 { color: #94a3b8; border-color: rgba(148, 163, 184, 0.4); }
+
+        #toast {
+            visibility: hidden; min-width: 250px; background: rgba(16, 185, 129, 0.9);
+            backdrop-filter: blur(8px); color: #fff; text-align: center; border-radius: 6px;
+            padding: 12px 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px;
+            transform: translateX(-50%) translateY(20px); font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Outfit', sans-serif; font-size: 14px;
+        }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); bottom: 40px; }
+
+        .calc-result { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-top: 12px; }
+        .calc-result-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .calc-result-row:last-child { margin-bottom: 0; padding-top: 6px; margin-top: 6px; border-top: 1px dashed var(--border-color); }
+        .calc-label { color: var(--text-secondary); font-size: 12px; font-weight: 600; }
+        .calc-value { color: #fff; font-family: 'Inter', monospace; font-weight: 700; font-size: 12px; }
+        .calc-value.highlight { color: var(--accent); text-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
+
+        /* Workspace Styles */
+        .file-list {
+            margin-top: 10px; max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color);
+            border-radius: 6px; background: rgba(0,0,0,0.2);
+        }
+        .file-item {
+            padding: 8px 10px; cursor: pointer; border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary); font-size: 12px; transition: 0.2s background-color;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .file-item:last-child { border-bottom: none; }
+        .file-item:hover, .file-item.active { background-color: rgba(59, 130, 246, 0.2); color: #fff; }
+        .file-empty { padding: 10px; color: var(--text-secondary); text-align: center; font-style: italic; }
+        .file-workspace-controls { display: flex; gap: 8px; margin-bottom: 10px; }
+
+        /* setAmounts Styles */
+        .set-amounts-container {
+            margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color);
+        }
+        .set-amounts-row {
+            display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-bottom: 6px; align-items: center;
+        }
+        .set-amounts-row input { margin-bottom: 0 !important; padding: 4px 8px !important; }
+
+        /* Mode & Top Bar */
+        .top-bar {
+            display: flex; gap: 16px; align-items: center; justify-content: space-between;
+            background: var(--panel-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 12px 20px; box-shadow: 0 8px 30px -10px rgba(0,0,0,0.5);
+            margin: 0 auto 20px auto; max-width: 1600px;
+        }
+        .mode-toggle { display: flex; gap: 4px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .mode-btn {
+            background: transparent; border: none; color: var(--text-secondary); padding: 8px 16px; font-weight: 600;
+            border-radius: 6px; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif;
+        }
+        .mode-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4); }
+
+        .global-calc-inputs { display: flex; gap: 12px; align-items: center; transition: opacity 0.3s; }
+        .global-calc-inputs > div { display: flex; flex-direction: column; width: 110px; }
+        .global-calc-inputs label { font-size: 10px; margin-bottom: 2px; }
+        .global-calc-inputs input { padding: 6px 8px; margin-bottom: 0; font-size: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<script src="data.js"></script>
+<datalist id="defaultStatsList">
+    <option value="Luck">
+    <option value="LuckMulti">
+    <option value="RP">
+    <option value="RPMulti">
+    <option value="UP">
+    <option value="UPMulti">
+    <option value="Prestige">
+    <option value="PrestigeMulti">
+    <option value="AP">
+    <option value="APMulti">
+    <option value="Ash">
+    <option value="AshMulti">
+    <option value="Revision">
+    <option value="RevisionMulti">
+    <option value="Cash">
+    <option value="CashMulti">
+    <option value="Crystals">
+    <option value="CrystalsMulti">
+    <option value="Transcension">
+    <option value="TranscensionMulti">
+    <option value="Radiance">
+    <option value="RadianceMulti">
+    <option value="RuneBulk">
+    <option value="RuneBulkMulti">
+    <option value="RuneLuck">
+    <option value="RuneLuckMulti">
+    <option value="ValentinesLuck">
+    <option value="Hearts">
+    <option value="EventRuneBulk">
+</datalist>
+
+<div id="toast">📋 Done!</div>
+
+<div class="header">
+    <h1>RC:R Rune Studio</h1>
+    <p style="color: var(--text-secondary); margin-top: 6px; font-size: 15px; font-weight: 500;">Advanced Visual Editor & Max Calculator</p>
+</div>
+
+<div class="top-bar">
+    <div class="mode-toggle">
+        <button class="mode-btn active" id="btnEditMode" onclick="setMode('edit')">✏️ Edit Mode</button>
+        <button class="mode-btn" id="btnCalcMode" onclick="setMode('calc')">🧮 Calculator Mode</button>
+    </div>
+    
+    <div class="global-calc-inputs" id="globalCalcInputs" style="opacity: 0.3; pointer-events: none;">
+        <div>
+            <label>Rune Bulk</label>
+            <input type="number" id="globalBulk" value="1" min="1" oninput="runGlobalCalculator()">
+        </div>
+        <div>
+            <label>Rune Speed (s)</label>
+            <input type="number" step="0.01" id="globalSpeed" value="0.04" min="0.01" oninput="runGlobalCalculator()">
+        </div>
+        <div>
+            <label>Rune Debuff (^)</label>
+            <input type="number" step="0.05" id="globalRuneDebuff" value="1.0" min="0.01" oninput="runGlobalCalculator()">
+        </div>
+        <div>
+            <label>Luck (x)</label>
+            <input type="number" step="0.1" id="globalLuck" value="1.0" min="1" oninput="runGlobalCalculator()">
+        </div>
+        <div>
+            <label>Secret Luck (x)</label>
+            <input type="number" step="0.1" id="globalSecretLuck" value="1.0" min="1" oninput="runGlobalCalculator()">
+        </div>
+        <div style="width: auto; padding-left: 12px; border-left: 1px dashed var(--border-color); align-items: center; justify-content: center;">
+            <label style="color: var(--accent); font-size: 10px; margin-bottom: 0;">Global RPS</label>
+            <span id="displayGlobalRPS" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 900; color: #fff;">25.0</span>
+        </div>
+    </div>
+</div>
+
+<div class="layout">
+    <!-- LEFT PANEL -->
+        <!-- PACKAGES PANEL -->
+        <div class="panel" id="packagesPanel">
+            <h2>Rune Packages</h2>
+            <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Select a package to view or calculate.</p>
+            
+            <div class="file-list" id="fileListContainer" style="max-height: 400px; padding: 2px;">
+                <div class="file-empty">Loading...</div>
+            </div>
+        </div>
+
+        <div class="panel" id="settingsPanel">
+            <h2>Package Details</h2>
+            <label>Package Name</label>
+            <input type="text" id="setRuneName" readonly style="opacity:0.8; background:rgba(0,0,0,0.4);">
+            <label>Package Cost</label>
+            <input type="text" id="setRuneCost" readonly style="opacity:0.8; background:rgba(0,0,0,0.4);">
+            <label>Package Stat</label>
+            <input type="text" list="defaultStatsList" id="setRuneStat" readonly style="opacity:0.8; background:rgba(0,0,0,0.4);">
+            <label>Package World</label>
+            <input type="text" id="setRuneWorld" readonly style="opacity:0.8; background:rgba(0,0,0,0.4);">
+            <label>Package Order</label>
+            <input type="text" id="setRuneOrder" readonly style="opacity:0.8; background:rgba(0,0,0,0.4);">
+        </div>
+    </div>        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel" style="background: transparent; border: none; box-shadow: none; padding: 0; backdrop-filter: none;">
+        <div class="panel flex-between" style="padding: 12px 18px; margin-bottom: 16px;">
+            <h2 style="margin: 0; border: none; font-size: 20px;">Rune List</h2>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" onclick="collapseAll()">Collapse All</button>
+                <button class="btn btn-primary" onclick="addNewRune()">+ Add New Rune</button>
+            </div>
+        </div>
+        <div id="runesContainer">
+            <div class="panel"><p style="color: var(--text-secondary); text-align:center;">Import Lua code or add a new rune to get started!</p></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'edit';
+    
+    function setMode(mode) {
+        currentMode = mode;
+        if(mode === 'calc') {
+            document.getElementById('btnCalcMode').classList.add('active');
+            document.getElementById('btnEditMode').classList.remove('active');
+            document.getElementById('globalCalcInputs').style.opacity = '1';
+            document.getElementById('globalCalcInputs').style.pointerEvents = 'auto';
+        } else {
+            document.getElementById('btnEditMode').classList.add('active');
+            document.getElementById('btnCalcMode').classList.remove('active');
+            document.getElementById('globalCalcInputs').style.opacity = '0.3';
+            document.getElementById('globalCalcInputs').style.pointerEvents = 'none';
+        }
+        renderUI();
+    }
+
+    function runGlobalCalculator() {
+        if(currentMode === 'calc') renderUI();
+    }
+
+    let runeData = {
+        settings: { RuneName: "Pirate", RuneCost: "7_500", RuneStat: "Transcension", RuneWorld: "PirateCove", RuneOrder: "6" },
+        runes:[]
+    };
+
+    function loadPackages() {
+        const container = document.getElementById('fileListContainer');
+        container.innerHTML = '';
+        
+        if (typeof rcrData !== 'undefined' && rcrData.length > 0) {
+            rcrData.forEach((pkg, idx) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.id = `package_${idx}`;
+                div.innerHTML = `<span><span style="opacity:0.6;">📦</span> ${pkg.settings.RuneWorld || 'Unknown'} - ${pkg.settings.RuneName}</span>`;
+                div.onclick = () => openPackage(idx);
+                container.appendChild(div);
+            });
+            // Open the first one by default
+            openPackage(0);
+        } else {
+            container.innerHTML = '<div class="file-empty">No runes found in data.js.</div>';
+        }
+    }
+
+    function openPackage(index) {
+        const pkg = rcrData[index];
+        
+        // Transform pkg to match studio.html format
+        let transformedRunes = [];
+        const excludeKeys = ['Name', 'Chance', 'Number', 'Secret', 'overrideText', 'max', 'noDebuff'];
+        
+        pkg.runes.forEach(r => {
+            let newRune = {
+                Name: r.Name || "Unnamed",
+                Chance: r.Chance ? `1/${Math.round(1/parseFloat(r.Chance))}` : "1/1",
+                Number: r.Number || 1,
+                Secret: r.Secret || false,
+                isCollapsed: true, // Start collapsed to save space in the list
+                stats: []
+            };
+            
+            for (const [key, value] of Object.entries(r)) {
+                if (!excludeKeys.includes(key) && typeof value === 'object' && value !== null) {
+                    newRune.stats.push({
+                        name: key,
+                        add: value.add,
+                        max: value.max,
+                        noDebuff: value.noDebuff || false,
+                        overrideText: value.overrideText || "",
+                        setAmounts: []
+                    });
+                }
+            }
+            transformedRunes.push(newRune);
+        });
+
+        runeData = {
+            settings: JSON.parse(JSON.stringify(pkg.settings)),
+            runes: transformedRunes
+        };
+        
+        // Remove active class from all
+        document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+        const activeEl = document.getElementById(`package_${index}`);
+        if (activeEl) activeEl.classList.add('active');
+        
+        renderUI();
+        showToast(`Loaded ${pkg.settings.RuneWorld || pkg.settings.RuneName}`);
+    }
+
+    // --- UTILS & NUMBER FORMATTING ---
+
+    function formatNumberStr(val) {
+        if (val === undefined || val === null) return "";
+        let strVal = val.toString().replace(/,/g, ''); 
+        let parts = strVal.split('/');
+        
+        let formattedParts = parts.map(p => {
+            let numPart = p.replace(/_/g, '').trim();
+            if (!isNaN(numPart) && numPart !== '') {
+                let splitDec = numPart.split('.');
+                let intPart = splitDec[0];
+                let decPart = splitDec[1];
+                intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, "_");
+                return decPart !== undefined ? `${intPart}.${decPart}` : intPart;
+            }
+            return p;
+        });
+        return formattedParts.join('/');
+    }
+
+    function parseUnderscoreNum(val) {
+        if (val === undefined || val === null) return 0;
+        return parseFloat(val.toString().replace(/_/g, '')) || 0;
+    }
+
+    function getRarityInfo(chanceStr) {
+        if (!chanceStr) return { class: 'rarity-common', name: 'Common', color: 'var(--r-common)' };
+        let parts = chanceStr.toString().replace(/_/g, '').split('/');
+        let denom = parts.length === 2 ? parseFloat(parts[1]) : parseFloat(parts[0]);
+        
+        if (isNaN(denom)) return { class: 'rarity-common', name: 'Common', color: 'var(--r-common)' };
+        if (denom < 100) return { class: 'rarity-common', name: 'Common', color: 'var(--r-common)' };
+        if (denom < 5000) return { class: 'rarity-uncommon', name: 'Uncommon', color: 'var(--r-uncommon)' };
+        if (denom < 50000) return { class: 'rarity-rare', name: 'Rare', color: 'var(--r-rare)' };
+        if (denom < 500000) return { class: 'rarity-epic', name: 'Epic', color: 'var(--r-epic)' };
+        if (denom < 5000000) return { class: 'rarity-legendary', name: 'Legendary', color: 'var(--r-legendary)' };
+        return { class: 'rarity-mythic', name: 'Mythic', color: 'var(--r-mythic)' };
+    }
+
+    function getSecretTier(chanceStr) {
+        if (!chanceStr) return { label: 'T?', class: 'tier-0' };
+        let parts = chanceStr.toString().replace(/_/g, '').split('/');
+        let denom = parts.length === 2 ? parseFloat(parts[1]) : parseFloat(parts[0]);
+        
+        if (isNaN(denom)) return { label: 'T?', class: 'tier-0' };
+        if (denom >= 5000000) return { label: 'T3', class: 'tier-3' };
+        if (denom >= 500000) return { label: 'T2', class: 'tier-2' };
+        if (denom >= 50000) return { label: 'T1', class: 'tier-1' };
+        
+        return { label: 'T?', class: 'tier-0' }; 
+    }
+
+    function calculateMaxRolls(addStr, maxStr, noDebuff, overrideText, setAmounts, statName) {
+        if (setAmounts && setAmounts.length > 0) return Infinity;
+        let add = parseUnderscoreNum(addStr);
+        let max = parseUnderscoreNum(maxStr);
+        if (add <= 0 || max <= 0 || isNaN(add) || isNaN(max)) return Infinity;
+
+        let isBulk = (overrideText === "Rune Bulk" || overrideText === "Event Rune Bulk");
+        let isMulti = statName && statName.toString().endsWith("Multi");
+        
+        let globalRuneDebuff = document.getElementById('globalRuneDebuff') ? (parseFloat(document.getElementById('globalRuneDebuff').value) || 1.0) : 1.0;
+        
+        // Match the "statMultiName" section of user's Lua code
+        if (isMulti) {
+            return max / add;
+        }
+
+        if (noDebuff) {
+            if (isBulk) {
+                return max / add;
+            } else {
+                return (max - 1) * 100 / add;
+            }
+        } else {
+            // Based exactly on user's Lua code
+            let exactRolls = (Math.pow(max, 1 / globalRuneDebuff) - 1) * 100 / add;
+            return Math.ceil(exactRolls);
+        }
+    }
+
+    function calculateMax(addStr, maxStr, noDebuff, overrideText, setAmounts, statName) {
+        if (setAmounts && setAmounts.length > 0) return "Thresholds";
+        let rolls = calculateMaxRolls(addStr, maxStr, noDebuff, overrideText, setAmounts, statName);
+        if (rolls === Infinity) return "N/A";
+        return Math.ceil(rolls).toLocaleString() + " Runes";
+    }
+
+    function getDynamicMaxLabel(maxStr, noDebuff, overrideText, setAmounts) {
+        if (setAmounts && setAmounts.length > 0) return "Max (Fixed Sets)";
+        if (!noDebuff) return "Max Limit (%)";
+        
+        let isBulk = (overrideText === "Rune Bulk" || overrideText === "Event Rune Bulk");
+        let max = parseUnderscoreNum(maxStr);
+        
+        if (isNaN(max) || max <= 0) return "Max Limit";
+        
+        if (isBulk || overrideText === "Rune Luck") {
+            return `Max Limit (${max}x)`;
+        }
+
+        let pct = (max - 1) * 100;
+        let formattedPct = pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(1);
+        return `Max Limit (+${formattedPct}%)`;
+    }
+
+    // --- UI INTERACTION ---
+
+    function handleStatNameChange(rIdx, sIdx, val) {
+        let stat = runeData.runes[rIdx].stats[sIdx];
+        stat.name = val;
+
+        if (val === "RuneLuck") {
+            stat.overrideText = "Rune Luck";
+            stat.noDebuff = true;
+        } else if (val === "RuneBulk") {
+            stat.overrideText = "Rune Bulk";
+            stat.noDebuff = true;
+        } else if (val === "EventRuneBulk") {
+            stat.overrideText = "Event Rune Bulk";
+            stat.noDebuff = true;
+        }
+        
+        renderUI();
+    }
+
+    function renderUI() {
+        document.getElementById("setRuneName").value = runeData.settings.RuneName || "";
+        document.getElementById("setRuneStat").value = runeData.settings.RuneStat || "";
+        document.getElementById("setRuneWorld").value = runeData.settings.RuneWorld || "";
+        document.getElementById("setRuneOrder").value = runeData.settings.RuneOrder || "";
+        
+        let runeCostInput = document.getElementById("setRuneCost");
+        runeCostInput.value = formatNumberStr(runeData.settings.RuneCost || "");
+        runeCostInput.onchange = function() {
+            this.value = formatNumberStr(this.value);
+            runeData.settings.RuneCost = this.value;
+        };
+
+        const container = document.getElementById("runesContainer");
+        container.innerHTML = "";
+
+        if (runeData.runes.length === 0) {
+            container.innerHTML = `<div class="panel"><p style="color: var(--text-secondary); text-align:center;">No runes found. Open a file or click Add New Rune.</p></div>`;
+            return;
+        }
+
+        let globalBulk = parseFloat(document.getElementById('globalBulk').value) || 1;
+        let globalSpeed = parseFloat(document.getElementById('globalSpeed').value) || 0.04;
+        let globalLuck = parseFloat(document.getElementById('globalLuck').value) || 1.0;
+        let globalSecretLuck = parseFloat(document.getElementById('globalSecretLuck').value) || 1.0;
+        let rps = globalBulk / globalSpeed;
+        if(isNaN(rps) || rps <= 0) rps = 1;
+        document.getElementById('displayGlobalRPS').innerText = rps.toFixed(1);
+
+        runeData.runes.forEach((r, rIdx) => {
+            const rCard = document.createElement('div');
+            let rarity = getRarityInfo(r.Chance);
+            
+            let secretTierHtml = '';
+            if (r.Secret) {
+                let tier = getSecretTier(r.Chance);
+                secretTierHtml = `<span class="tier-badge ${tier.class}">${tier.label}</span>`;
+            }
+
+            rCard.className = `rune-card ${rarity.class} ${r.isCollapsed ? 'collapsed' : ''}`;
+            rCard.id = `runeCard_${rIdx}`;
+
+            let statsHtml = '';
+
+            if (currentMode === 'calc') {
+                // Calculator Mode
+                let baseChanceStr = r.Chance || '1/1';
+                let denomMatch = baseChanceStr.replace(/_/g, '').match(/\/(.+)/);
+                let baseDenom = 1;
+                if(denomMatch) {
+                    baseDenom = parseFloat(denomMatch[1]);
+                } else {
+                    baseDenom = parseFloat(baseChanceStr.replace(/_/g, ''));
+                }
+                
+                let effectiveDenom = baseDenom;
+                if(r.Secret) {
+                    effectiveDenom /= globalSecretLuck;
+                } else {
+                    effectiveDenom /= globalLuck;
+                }
+                if(effectiveDenom < 1 || isNaN(effectiveDenom)) effectiveDenom = 1;
+                
+                let timeToGetSeconds = effectiveDenom / rps;
+                let timeToGetFormatted = formatTime(timeToGetSeconds);
+
+                r.stats.forEach((s, sIdx) => {
+                    let maxStr = calculateMax(s.add, s.max, s.noDebuff, s.overrideText, s.setAmounts, s.name);
+                    let rollsToMax = calculateMaxRolls(s.add, s.max, s.noDebuff, s.overrideText, s.setAmounts, s.name);
+                    
+                    let timeToMaxHtml = '';
+                    if (rollsToMax === Infinity || !rollsToMax || isNaN(rollsToMax)) {
+                        timeToMaxHtml = `<span style="color:var(--text-secondary);">N/A (Thresholds/Fixed)</span>`;
+                    } else {
+                        let timeToMaxSeconds = (rollsToMax * effectiveDenom) / rps;
+                        timeToMaxHtml = `<span style="color:var(--accent); font-weight:700;">${formatTime(timeToMaxSeconds)}</span>`;
+                    }
+
+                    statsHtml += `
+                        <div class="stat-item" style="grid-template-columns: 140px 1fr 1fr; align-items: center; padding: 12px 16px;">
+                            <div>
+                                <label style="margin-bottom:2px;">Stat Name</label>
+                                <span style="font-weight:700; font-size:14px; padding-left:2px;">${s.name}</span>
+                            </div>
+                            <div>
+                                <label style="margin-bottom:2px;">Rune Opens to Max</label>
+                                <span style="color:var(--success); font-weight:700; padding-left:2px;">${maxStr}</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <label style="margin-bottom:2px;">Estimated Time to Max</label>
+                                ${timeToMaxHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                rCard.innerHTML = `
+                    <div class="rune-header" onclick="toggleCollapse(${rIdx}, event)">
+                        <div style="display:flex; align-items:center;">
+                            <span class="rarity-text" style="color: ${rarity.color}">${rarity.name}</span>
+                            <span style="font-size: 16px; font-weight: 700; font-family:'Outfit', sans-serif; margin-right: 12px;">${r.Name || 'Unnamed'}</span>
+                            ${secretTierHtml}
+                        </div>
+                        <div class="header-actions" onclick="event.stopPropagation()">
+                            <span style="color:var(--text-secondary); font-size:11px; margin-right:8px;">Base: 1 / ${Math.ceil(baseDenom).toLocaleString()}</span>
+                            <span style="color:var(--text-primary); font-size:12px; font-weight:700; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:4px;">Eff: 1 / ${Math.ceil(effectiveDenom).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="rune-body">
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; margin-bottom:16px; border:1px solid var(--border-color);">
+                            <div>
+                                <div style="font-size:11px; color:var(--text-secondary); text-transform:uppercase; font-weight:700; margin-bottom:4px; letter-spacing: 0.5px;">Expected Rolls to Get</div>
+                                <div style="font-size:20px; font-weight:900; color:#fff; font-family:'Outfit',sans-serif;">${Math.ceil(effectiveDenom).toLocaleString()} Rolls</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:11px; color:var(--text-secondary); text-transform:uppercase; font-weight:700; margin-bottom:4px; letter-spacing: 0.5px;">Estimated Time to Get</div>
+                                <div style="font-size:20px; font-weight:900; color:var(--accent); font-family:'Outfit',sans-serif; text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);">${timeToGetFormatted}</div>
+                            </div>
+                        </div>
+                        <h3 class="flex-between" style="border-color: var(--border-color); margin-top: 8px;">
+                            Stats to Max
+                        </h3>
+                        <div class="stat-list">
+                            ${statsHtml}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Edit Mode
+                r.stats.forEach((s, sIdx) => {
+                    if (!s.setAmounts) s.setAmounts = [];
+                    let maxResultLabel = calculateMax(s.add, s.max, s.noDebuff, s.overrideText, s.setAmounts, s.name);
+                    let dynamicMaxTitle = getDynamicMaxLabel(s.max, s.noDebuff, s.overrideText, s.setAmounts);
+
+                    let saHtml = s.setAmounts.map((sa, saIdx) => `
+                        <div class="set-amounts-row">
+                            <input type="text" placeholder="Threshold" value="${sa.threshold}" onchange="updateSetAmount(${rIdx}, ${sIdx}, ${saIdx}, 'threshold', this.value)">
+                            <input type="text" placeholder="Amount" value="${sa.amount}" onchange="updateSetAmount(${rIdx}, ${sIdx}, ${saIdx}, 'amount', this.value)">
+                            <button class="btn btn-danger" style="padding: 2px 6px;" onclick="removeSetAmount(${rIdx}, ${sIdx}, ${saIdx})">x</button>
+                        </div>
+                    `).join('');
+
+                    statsHtml += `
+                        <div class="stat-item" style="grid-template-columns: 140px 90px 120px 90px 1fr auto; align-items: start;">
+                            <div>
+                                <label>Stat Name</label>
+                                <input type="text" list="defaultStatsList" value="${s.name}" onchange="handleStatNameChange(${rIdx}, ${sIdx}, this.value)">
+                                <button class="btn" style="width:100%; font-size:10px; margin-top:4px;" onclick="addSetAmount(${rIdx}, ${sIdx})">+ Set Amounts</button>
+                            </div>
+                            <div>
+                                <label>Add</label>
+                                <input type="text" value="${s.add}" 
+                                    oninput="updateStat(${rIdx}, ${sIdx}, 'add', this.value); updateMaxDisplays(${rIdx}, ${sIdx});"
+                                    onchange="this.value = formatNumberStr(this.value); updateStat(${rIdx}, ${sIdx}, 'add', this.value); updateMaxDisplays(${rIdx}, ${sIdx});">
+                            </div>
+                            <div>
+                                <label id="dynamicMaxTitle_${rIdx}_${sIdx}" style="color: ${s.noDebuff ? 'var(--accent)' : 'var(--text-secondary)'}">${dynamicMaxTitle}</label>
+                                <input type="text" value="${s.max}" 
+                                    oninput="updateStat(${rIdx}, ${sIdx}, 'max', this.value); updateMaxDisplays(${rIdx}, ${sIdx});"
+                                    onchange="this.value = formatNumberStr(this.value); updateStat(${rIdx}, ${sIdx}, 'max', this.value); updateMaxDisplays(${rIdx}, ${sIdx});">
+                            </div>
+                            <div style="padding-top:16px;">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" ${s.noDebuff ? 'checked' : ''} onchange="updateStat(${rIdx}, ${sIdx}, 'noDebuff', this.checked); updateMaxDisplays(${rIdx}, ${sIdx});">
+                                    No Debuff
+                                </label>
+                            </div>
+                            <div>
+                                <label>Override Text / setAmounts</label>
+                                <input type="text" value="${s.overrideText || ''}" oninput="updateStat(${rIdx}, ${sIdx}, 'overrideText', this.value); updateMaxDisplays(${rIdx}, ${sIdx});">
+                                <div class="set-amounts-container" id="saContainer_${rIdx}_${sIdx}">
+                                    ${saHtml}
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; justify-content: space-between; align-items:flex-end;">
+                                <button class="btn btn-danger" onclick="deleteStat(${rIdx}, ${sIdx})" title="Delete Stat">X</button>
+                                <div class="max-display" id="maxLabel_${rIdx}_${sIdx}">Max: ${maxResultLabel}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                rCard.innerHTML = `
+                    <div class="rune-header" onclick="toggleCollapse(${rIdx}, event)">
+                        <div style="display:flex; align-items:center;">
+                            <span class="rarity-text" style="color: ${rarity.color}">${rarity.name}</span>
+                            <input type="text" value="${r.Name || 'Unnamed'}" onclick="event.stopPropagation()" onchange="updateRune(${rIdx}, 'Name', this.value)">
+                            ${secretTierHtml}
+                        </div>
+                        <div class="header-actions" onclick="event.stopPropagation()">
+                            <button class="control-btn" onclick="moveRune(${rIdx}, -1)" title="Move Up" ${rIdx === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>
+                            <button class="control-btn" onclick="moveRune(${rIdx}, 1)" title="Move Down" ${rIdx === runeData.runes.length-1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>
+                            <button class="btn btn-danger" style="margin-left:6px;" onclick="deleteRune(${rIdx})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="rune-body">
+                        <div class="rune-grid">
+                            <div>
+                                <label>Chance Formula</label>
+                                <input type="text" value="${r.Chance || ''}" 
+                                    oninput="updateRune(${rIdx}, 'Chance', this.value)"
+                                    onchange="this.value = formatNumberStr(this.value); updateRune(${rIdx}, 'Chance', this.value); renderUI();">
+                            </div>
+                            <div>
+                                <label>Number ID</label>
+                                <input type="text" value="${r.Number || ''}" onchange="updateRune(${rIdx}, 'Number', this.value)">
+                            </div>
+                            <div style="padding-top:16px;">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" ${r.Secret ? 'checked' : ''} onchange="updateRune(${rIdx}, 'Secret', this.checked); renderUI();">
+                                    Is Secret Rune
+                                </label>
+                            </div>
+                        </div>
+                        <h3 class="flex-between" style="border-color: var(--border-color); margin-top: 8px;">
+                            Stats List
+                            <button class="btn" style="padding: 2px 8px;" onclick="addStat(${rIdx})">+ Add Stat</button>
+                        </h3>
+                        <div class="stat-list">
+                            ${statsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.appendChild(rCard);
+        });
+    }
+
+    function toggleCollapse(rIdx, event) {
+        runeData.runes[rIdx].isCollapsed = !runeData.runes[rIdx].isCollapsed;
+        let card = document.getElementById(`runeCard_${rIdx}`);
+        if(runeData.runes[rIdx].isCollapsed) {
+            card.classList.add('collapsed');
+        } else {
+            card.classList.remove('collapsed');
+        }
+    }
+
+    function collapseAll() {
+        let anyOpen = runeData.runes.some(r => !r.isCollapsed);
+        runeData.runes.forEach(r => r.isCollapsed = anyOpen); 
+        renderUI();
+    }
+
+    function moveRune(rIdx, direction) {
+        if (rIdx + direction < 0 || rIdx + direction >= runeData.runes.length) return;
+        let temp = runeData.runes[rIdx];
+        runeData.runes[rIdx] = runeData.runes[rIdx + direction];
+        runeData.runes[rIdx + direction] = temp;
+        
+        runeData.runes.forEach((r, idx) => r.Number = idx + 1);
+        renderUI();
+    }
+
+    function updateRune(rIdx, key, val) {
+        runeData.runes[rIdx][key] = val;
+    }
+
+    function updateStat(rIdx, sIdx, key, val) {
+        runeData.runes[rIdx].stats[sIdx][key] = val;
+    }
+
+    function updateMaxDisplays(rIdx, sIdx) {
+        const s = runeData.runes[rIdx].stats[sIdx];
+        
+        const label = document.getElementById(`maxLabel_${rIdx}_${sIdx}`);
+        if(label) label.innerText = "Max: " + calculateMax(s.add, s.max, s.noDebuff, s.overrideText, s.setAmounts, s.name);
+
+        const titleLabel = document.getElementById(`dynamicMaxTitle_${rIdx}_${sIdx}`);
+        if(titleLabel) {
+            titleLabel.innerText = getDynamicMaxLabel(s.max, s.noDebuff, s.overrideText, s.setAmounts);
+            titleLabel.style.color = s.noDebuff ? 'var(--accent)' : 'var(--text-secondary)';
+        }
+    }
+
+    function addNewRune() {
+        let newNum = runeData.runes.length + 1;
+        runeData.runes.push({
+            Name: "New Rune",
+            Chance: "1/1_000",
+            Number: newNum,
+            Secret: false,
+            isCollapsed: false,
+            stats:[ { name: "Luck", add: "1", max: "100", noDebuff: false, overrideText: "", setAmounts: [] } ]
+        });
+        renderUI();
+        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+    }
+
+    function deleteRune(rIdx) {
+        if(confirm("Are you sure you want to delete this entire rune?")) {
+            runeData.runes.splice(rIdx, 1);
+            runeData.runes.forEach((r, idx) => r.Number = idx + 1); 
+            renderUI();
+        }
+    }
+
+    function addStat(rIdx) {
+        runeData.runes[rIdx].stats.push({ name: "Luck", add: "1", max: "100", noDebuff: false, overrideText: "", setAmounts: [] });
+        runeData.runes[rIdx].isCollapsed = false; 
+        renderUI();
+    }
+
+    function deleteStat(rIdx, sIdx) {
+        runeData.runes[rIdx].stats.splice(sIdx, 1);
+        renderUI();
+    }
+
+    function addSetAmount(rIdx, sIdx) {
+        if (!runeData.runes[rIdx].stats[sIdx].setAmounts) runeData.runes[rIdx].stats[sIdx].setAmounts = [];
+        runeData.runes[rIdx].stats[sIdx].setAmounts.push({ threshold: "1", amount: "1" });
+        renderUI();
+    }
+
+    function removeSetAmount(rIdx, sIdx, saIdx) {
+        runeData.runes[rIdx].stats[sIdx].setAmounts.splice(saIdx, 1);
+        renderUI();
+    }
+
+    function updateSetAmount(rIdx, sIdx, saIdx, key, val) {
+        runeData.runes[rIdx].stats[sIdx].setAmounts[saIdx][key] = val;
+    }
+
+
+
+    function formatTime(totalSeconds) {
+        if (!isFinite(totalSeconds) || totalSeconds < 0) return "--";
+        
+        let seconds = Math.floor(totalSeconds % 60);
+        let minutes = Math.floor((totalSeconds / 60) % 60);
+        let hours = Math.floor((totalSeconds / 3600) % 24);
+        let days = Math.floor(totalSeconds / 86400);
+
+        let parts = [];
+        if (days > 0) parts.push(`${days}d`);
+        if (hours > 0 || days > 0) parts.push(`${hours}h`);
+        if (minutes > 0 || hours > 0 || days > 0) parts.push(`${minutes}m`);
+        parts.push(`${seconds}s`);
+
+        if (parts.length === 0) return "Instant";
+        return parts.join(' ');
+    }
+
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'RCR_WORKSPACE_LOADED') {
+            rcrData = e.data.data;
+            loadPackages();
+        }
+    });
+
+    window.onload = loadPackages;
+</script>
+
+</body>
+</html>

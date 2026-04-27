@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rarity Champions: Reborn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="nav-container">
+                <div class="logo-area">
+                    <h1 class="logo">Rarity Champions: Reborn <span class="logo-accent">| Official Website</span></h1>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-body">
+            <!-- Left Sidebar Navigation -->
+            <aside class="sidebar">
+                <ul class="nav-links sidebar-links">
+                    <li><a href="#runes" class="active" data-tab="runes"><span class="icon">🏠</span> Runes</a></li>
+                    <li><a href="#studio" data-tab="studio"><span class="icon">🛠️</span> Rune Studio</a></li>
+                    <!-- <li><a href="#stats" data-tab="stats"><span class="icon">📊</span> Rarities</a></li> -->
+                    <li><a href="#faq" data-tab="faq"><span class="icon">❓</span> FAQ</a></li>
+                </ul>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="content-container">
+        
+        <!-- RUNES SECTION -->
+        <section id="runes" class="tab-pane active">
+            <header class="section-header">
+                <h2>Rune Index</h2>
+                <p>List of all the runes in the game.</p>
+            </header>
+            
+            <div class="world-filter" id="world-filter-container">
+                <!-- Buttons injected by JS -->
+            </div>
+
+            <div class="runes-grid" id="runes-container">
+                <!-- Rune Cards Injected via JS -->
+            </div>
+        </section>
+
+        <!-- RUNE STUDIO SECTION -->
+        <section id="studio" class="tab-pane">
+            <div style="width: 100%; height: 850px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin-top: 2rem;">
+                <iframe src="studio.html" width="100%" height="100%" style="border:none; background: transparent;"></iframe>
+            </div>
+        </section>
+
+        <!-- STATS & RARITIES SECTION -->
+        <section id="stats" class="tab-pane">
+            <header class="section-header">
+                <h2>Stats & Rarities</h2>
+                <p>Ascend through the tiers of power.</p>
+            </header>
+            
+            <div class="rarities-list" id="rarities-container">
+                <!-- Rarity Items Injected via JS -->
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section id="faq" class="tab-pane">
+            <header class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Knowledge is power.</p>
+            </header>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">How does Rarity work?</button>
+                    <div class="faq-answer">
+                        <p>Rarities are the main part of the game. Rarities can be rolled for and the more luck you have, the better rarity you'll get. Higher rarities will give you more stats in layers!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">What are Runes?</button>
+                    <div class="faq-answer">
+                        <p>Runes are a fundamental part of the game. Runes give awesome multipliers at cost for your stats. Without runes the game probably would be pretty hard to progress in.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">What are clovers?</button>
+                    <div class="faq-answer">
+                        <p>You can find clovers scattered across every area in the game! There are 30 in total. Each clover gives you +5% Luck Multiplier</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">What resets Super?</button>
+                    <div class="faq-answer">
+                        <p>Nothing at the moment apart for challenges. Layers reset all previous layers before them apart for super.</p>
+                    </div>
+                </div>
+            </div>
+    </main>
+    </div> <!-- Close main body -->
+    </div> <!-- Close app layout -->
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
