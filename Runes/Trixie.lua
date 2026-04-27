@@ -42,15 +42,11 @@ local Rune = {
 		},
 		
 		{
-			Name = "shoober.",
-			Chance = 1/1_000_000_000,
+			Name = "gatekeeping.",
+			Chance = 1/999_999_999_999,
 			Number = 4,
 			Secret = true,
-			Luck = { add = 10, max = 100_000_000 },
-			Revision = { add = 10, max = 1.5, noDebuff = true },
-			ValentinesLuck = { add = 25, max = 10, noDebuff = true },
-			AprilStat = { add = 1_000, max = 999_999_999, noDebuff = true, overrideText = "stat" },
-			EventRuneBulk = { setAmounts = { [1] = 1, [10] = 2, [100] = 3, [1_000] = 4, [10_000] = 5 }, add = 0, max = 5, noDebuff = true, overrideText = "Event Rune Bulk" },
+			AprilStat = { add = 9999999, max =999999999, noDebuff = true, overrideText = "gatekeeping this stat" },
 		},
 	}
 }
