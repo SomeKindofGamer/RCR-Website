@@ -245,10 +245,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return String(num).replace(/max.*}/g, ''); 
     }
     
+    function getRuneCategory(settings) {
+        if (settings.Event) return "Event";
+        if (settings.Exclusive) return "Exclusive";
+        return settings.RuneWorld || "Unknown";
+    }
+    
     function renderFilters() {
         filterContainer.innerHTML = '';
         if (currentRunesData.length === 0) return;
-        const worlds = ["All", ...new Set(currentRunesData.map(g => g.settings.Event ? "Event" : (g.settings.RuneWorld || "Unknown")))];
+        const worlds = ["All", ...new Set(currentRunesData.map(g => getRuneCategory(g.settings)))];
         worlds.forEach(world => {
             const btn = document.createElement('button');
             btn.className = `filter-btn ${world === 'All' ? 'active' : ''}`;
@@ -271,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const filteredData = worldFilter === 'All' 
             ? currentRunesData 
-            : currentRunesData.filter(d => (d.settings.Event ? "Event" : (d.settings.RuneWorld || "Unknown")) === worldFilter);
+            : currentRunesData.filter(d => getRuneCategory(d.settings) === worldFilter);
 
         filteredData.forEach(packageData => {
             const settings = packageData.settings;
@@ -343,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         runesContainer.innerHTML = '<p style="text-align:center; padding: 2rem;">Loading Runes from folder...</p>';
         
         let fileList = [
-            "300K.lua", "Cave.lua", "Desert.lua", "Frosty.lua", "Jungle.lua", "Pirate.lua", "Starter.lua"
+            "300K.lua", "Cave.lua", "Desert.lua", "Elemental.lua", "Frosty.lua", "Heartfelt.lua", "Jungle.lua", "Pirate.lua", "Space.lua", "Starter.lua", "Trixie.lua"
         ];
 
         // Attempt to dynamically scrape the index of /Runes/ if the server provides it
