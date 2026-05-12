@@ -101,6 +101,20 @@ local Rune = {
 			Revision = {add = 350, max = 21, noDebuff = true},
 			Cash = {add = 15, max = 6, noDebuff = true},
 			RuneBulk = {add = 1, max = 3, overrideText = "Rune Bulk", noDebuff = true}
+		},
+		
+		{
+			Name = "Vulpes Lagopus",
+			Chance = 1/333_444_555,
+			Number = 10,
+			Secret = true,
+			LuckMulti = {add = 0.1, max = 1},
+			PrestigeMulti = {add = 0.1, max = 1},
+			CrystalsMulti = {add = 0.1, max = 1},
+			TranscensionMulti = {add = 0.075, max = 1},
+			RadianceMulti = {add = 0.075, max = 1},
+			RuneLuck = {add = 6.5, max = 1.5, overrideText = "Rune Luck", noDebuff = true},
+			RuneBulk = { setAmounts = { [1] = 1, [20] = 2 }, add = 0, max = 2, noDebuff = true, overrideText = "Rune Bulk" },
 		}
 	}
 }

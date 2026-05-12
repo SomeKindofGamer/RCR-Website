@@ -4,8 +4,7 @@ local Rune = {
 		["RuneCost"] = 3.333e33,
 		["RuneStat"] = "Rebirths",
 		["RuneWorld"] = "Spawn",
-		["RuneOrder"] = 999,
-		["Event"] = true,
+		["RuneOrder"] = 51,
 	},
 
 	Runes = {
@@ -38,7 +37,7 @@ local Rune = {
 			Luck = { add = 0.000753, max = 200 },
 			Cash = { add = 0.00125, max = 200 },
 			Radiance = { add = 0.001295, max = 250 },
-			RuneBulk = { setAmounts = { [20_000] = 1, [500_000] = 2, [25_000_000] = 3 }, add = 1, max = 3, noDebuff = true, overrideText = "Rune Bulk" },
+			EventRuneBulk = { setAmounts = { [20_000] = 1, [500_000] = 2, [25_000_000] = 3 }, add = 0, max = 3, noDebuff = true, overrideText = "Event Rune Bulk" },
 		},
 
 		{
@@ -55,14 +54,14 @@ local Rune = {
 			Chance = 1/115_000,
 			Number = 5,
 			RuneLuck = { add = 0.01, max = 2, noDebuff = true, overrideText = "Rune Luck" },
-			RuneBulk = { setAmounts = { [1] = 1, [20_000] = 2, [250_000] = 3 }, max = 3, noDebuff = true, overrideText = "Rune Bulk" },
+			EventRuneBulk = { setAmounts = { [1] = 1, [20_000] = 2, [250_000] = 3 }, add = 0, max = 3, noDebuff = true, overrideText = "Event Rune Bulk" },
 			AP = { add = 0.155555, max = 350 },
 			Radiance = { add = 0.055555, max = 500 },
 		},
 
 		{
 			Name = "300K Ultimate",
-			Chance = 1/350_000,
+			Chance = 1/355_000,
 			Number = 6,
 			Secret = true,
 			Luck = { add = 35, max = 500 },
@@ -82,13 +81,30 @@ local Rune = {
 
 		{
 			Name = "300K Voidlight",
-			Chance = 1/25_555_555,
+			Chance = 1/27_555_555,
 			Number = 8,
 			Secret = true,
 			Luck = { add = 15, max = 11, noDebuff = true },
 			Prestige = { add = 125, max = 100 },
 			Hearts = { add = 3_235, max = 100_000 },
 			ValentinesLuck = { add = 10, max = 3.5, noDebuff = true },
+			RuneBulk = { setAmounts = { [1] = 1, [100] = 2, [1_000] = 3 }, add = 0, max = 3, noDebuff = true, overrideText = "Rune Bulk" },
+		},
+
+		{
+			Name = "300K Reality",
+			Chance = 1/1_000_000_000,
+			Number = 9,
+			Secret = true,
+			LuckMulti = {add = 0.25, max = 1},
+			RPMulti = {add = 0.25, max = 1},
+			UPMulti = {add = 0.25, max = 1},
+			PrestigeMulti = {add = 0.25, max = 1},
+			CrystalsMulti = {add = 0.25, max = 1},
+			TranscensionMulti = {add = 0.15, max = 1},
+			RadianceMulti = {add = 0.15, max = 1},
+			RuneLuck = {add = 10, max = 1.5, overrideText = "Rune Luck", noDebuff = true},
+			RuneBulk = { setAmounts = { [1] = 1, [5] = 2, [10] = 3 }, add = 0, max = 3, noDebuff = true, overrideText = "Rune Bulk" },
 		},
 	}
 }

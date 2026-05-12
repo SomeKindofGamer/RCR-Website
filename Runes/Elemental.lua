@@ -3,7 +3,6 @@ local Rune = {
 		["RuneName"] = "Elemental",
 		["RuneCost"] = "1e9999",
 		["RuneStat"] = "Rebirths",
-		["RuneWorld"] = "Exclusive",
 		["Exclusive"] = true,
 		["RuneOrder"] = 101
 	},

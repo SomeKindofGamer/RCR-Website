@@ -85,7 +85,7 @@ local Rune = {
 			RP = {add = 200, max = 21, noDebuff = true},
 			AP = {add = 100, max = 8.5, noDebuff = true},
 			Revision = {add = 50, max = 6, noDebuff = true},
-			RuneBulk = {add = 1, max = 2, overrideText = "Rune Bulk", noDebuff = true}
+			RuneBulk = { setAmounts = { [1] = 1, [100] = 2 }, add = 0, max = 2, noDebuff = true, overrideText = "Rune Bulk" },
 		},
 		
 		{
@@ -98,7 +98,7 @@ local Rune = {
 			RevisionMulti = {add = 0.5, max = 1},
 			CrystalsMulti = {add = 0.5, max = 1},
 			RuneLuck = {add = 10, max = 1.5, overrideText = "Rune Luck", noDebuff = true},
-			RuneBulk = {add = 1, max = 3, overrideText = "Rune Bulk", noDebuff = true}
+			RuneBulk = { setAmounts = { [1] = 1, [15] = 2, [50] = 3 }, add = 0, max = 3, noDebuff = true, overrideText = "Rune Bulk" },
 		}
 	}
 }
